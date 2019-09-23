@@ -1027,6 +1027,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 682355649}
+  - {fileID: 2061430679}
   m_Father: {fileID: 1349562416}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3196,7 +3197,7 @@ PrefabInstance:
     - target: {fileID: 8989156375708379833, guid: af506c058767f7a4c96a5bf075d6c3b3,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.19
+      value: -1.93
       objectReference: {fileID: 0}
     - target: {fileID: 8989156375708379833, guid: af506c058767f7a4c96a5bf075d6c3b3,
         type: 3}
@@ -9143,7 +9144,6 @@ Transform:
   m_Children:
   - {fileID: 532599583}
   - {fileID: 1723037426}
-  - {fileID: 2061430679}
   m_Father: {fileID: 519506759}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9176,7 +9176,7 @@ CharacterController:
   m_Height: 1.8
   m_Radius: 0.3
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0.1
   m_SkinWidth: 0.01
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.9, z: 0}
@@ -9230,6 +9230,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cargoParentTransform: {fileID: 2061430679}
+  _animator: {fileID: 532599585}
+  _pickDelay: 0.75
+  _putDelay: 0.75
+  _dropDelay: 0.1
+  _pickAnimationDelay: 1.06
+  _putAnimationDelay: 1.06
+  _dropAnimationDelay: 0.2
 --- !u!1 &1018240134
 GameObject:
   m_ObjectHideFlags: 0
@@ -9839,7 +9846,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1114386693}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.97217274, y: 0.34807304, z: 0.57296556}
@@ -9856,6 +9863,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f18ceb76fe90df84a96fa18c685fc5d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _timeToDestroy: 2
 --- !u!54 &1114386699
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9884,7 +9892,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2067ea19984560c4ebdf58cff4adb236, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _needMove: 1
+  _needMove: 0
   _speed: 1
 --- !u!1 &1114587304
 GameObject:
@@ -14685,7 +14693,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 1723037425}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.3
   m_Height: 1.8
   m_Direction: 1
@@ -17238,12 +17246,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2061430678}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.026000082, y: 1.1159999, z: 0.5349999}
+  m_LocalRotation: {x: 0.31834444, y: -0.62344426, z: 0.3226156, w: 0.63709754}
+  m_LocalPosition: {x: 0.2915323, y: -0.81082094, z: -0.016505644}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1010750494}
-  m_RootOrder: 2
+  m_Father: {fileID: 108461330}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2062407512
 GameObject:

@@ -22,7 +22,7 @@ namespace Cargoman
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                _cargoPicker.InteractWithCargo();
+                _cargoPicker.InteractWithCargo(_movementController);
             }
         }
     }
