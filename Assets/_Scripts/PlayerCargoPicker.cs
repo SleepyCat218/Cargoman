@@ -54,6 +54,7 @@ namespace Cargoman
         {
             yield return new WaitForSeconds(_pickDelay);
             _pickedCargo = pickableObject.Pick(cargoParentTransform);
+            _possiblePick = null;
             yield return new WaitForSeconds(Mathf.Abs(_pickAnimationDelay - _pickDelay));
             playerMovement.CanMove = true;
             _canInteract = true;

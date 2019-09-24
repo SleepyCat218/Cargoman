@@ -10,6 +10,9 @@ namespace Cargoman
         private Rigidbody _rigidbody;
         [SerializeField] private float _timeToDestroy = 2f;
 
+        public delegate void CleanSubmitterQueueDelegate();
+        public CleanSubmitterQueueDelegate cleanSubmitterQueue; 
+
         public IPickable Pick(Transform cargoParentTransform)
         {
             CanBePickable = false;
@@ -17,6 +20,11 @@ namespace Cargoman
             _transform.position = cargoParentTransform.position;
             _transform.rotation = cargoParentTransform.rotation;
             _transform.parent = cargoParentTransform;
+            if(cleanSubmitterQueue != null)
+            {
+                cleanSubmitterQueue();
+                cleanSubmitterQueue = null;
+            }
             return this;
         }
 
