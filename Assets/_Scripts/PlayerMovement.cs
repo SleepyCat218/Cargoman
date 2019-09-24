@@ -5,6 +5,7 @@ namespace Cargoman
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : MonoBehaviour
     {
+        private const float gravityConst = -9.8f;
         private bool _canMove;
         private CharacterController _characterController;
 
@@ -36,8 +37,8 @@ namespace Cargoman
             {
                 movementVector.Normalize();
             }
-            movementVector = transform.TransformDirection(movementVector);
-            _characterController.Move(movementVector * _speed * timescaleMultiplier);
+            movementVector = transform.TransformDirection(movementVector) * _speed + (Vector3.up * gravityConst);
+            _characterController.Move(movementVector * timescaleMultiplier);
         }
 
         public void Rotate(float rotation, float timescaleMultiplier = 1)
