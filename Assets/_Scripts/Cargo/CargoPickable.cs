@@ -3,10 +3,12 @@
 namespace Cargoman
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class CargoPickable : MonoBehaviour, IPickable
+    public class CargoPickable : MonoBehaviour, ICargo
     {
+        [SerializeField] private Sprite _cargoImage;
         [SerializeField] private CargoType _cargoType;
         public CargoType cargoType { get => _cargoType; }
+        public Sprite CargoImage { get => _cargoImage; }
         public bool CanBePickable { get; set; }
         private Transform _transform;
         private Rigidbody _rigidbody;
@@ -15,7 +17,7 @@ namespace Cargoman
         public delegate void CleanSubmitterQueueDelegate();
         public CleanSubmitterQueueDelegate cleanSubmitterQueue; 
 
-        public IPickable Pick(Transform cargoParentTransform)
+        public ICargo Pick(Transform cargoParentTransform)
         {
             CanBePickable = false;
             _rigidbody.isKinematic = true;
