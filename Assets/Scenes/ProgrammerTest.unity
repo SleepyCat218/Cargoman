@@ -3138,6 +3138,49 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 329911993}
   m_Mesh: {fileID: 4300000, guid: 39ad8389f5b23aa4ab4473dcc86c816e, type: 2}
+--- !u!1 &336806413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 336806415}
+  - component: {fileID: 336806414}
+  m_Layer: 0
+  m_Name: Orders
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &336806414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 336806413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8df44f6f357aa264281881923e759140, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &336806415
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 336806413}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.32786655, y: -0.63323164, z: -0.22817206}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &337761849
 GameObject:
   m_ObjectHideFlags: 0
@@ -20295,6 +20338,7 @@ GameObject:
   - component: {fileID: 5234045419039953345}
   - component: {fileID: 5206483346161651805}
   - component: {fileID: 5206483346161651804}
+  - component: {fileID: 5206483346161651806}
   m_Layer: 0
   m_Name: ObstacleTable
   m_TagString: BuilderObstacle
@@ -20314,7 +20358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf355cc4bd05a4a935a170826bf071, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cargoTransform: {fileID: 1529000477}
+  _cargoTransform: {fileID: 1529000477}
 --- !u!54 &5206483346161651805
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -20331,6 +20375,25 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &5206483346161651806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5206483346161651803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61c851567f066004da1f635e2296a945, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _waitLight: {fileID: 251431726533243715}
+  _failOrderSoonLight: {fileID: 7565589475312346784}
+  _orders: {fileID: 336806414}
+  _timeToGetNewOrder: 5
+  _timerPercentForRedLight: 25
+  failLightFreq: 0.25
+  _redLightTurnedOn: 0
 --- !u!1 &5206485277554219845
 GameObject:
   m_ObjectHideFlags: 0

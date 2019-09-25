@@ -74,6 +74,7 @@ namespace Cargoman
         {
             yield return new WaitForSeconds(_putDelay);
             objectToPut.PutCargo(_cargoReceiver.GetCargoTransform());
+            _cargoReceiver.ReceiveCargo(objectToPut);
             _pickedCargo = null;
             yield return new WaitForSeconds(Mathf.Abs(_putAnimationDelay - _putDelay));
             playerMovement.CanMove = true;

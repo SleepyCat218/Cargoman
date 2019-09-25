@@ -6,7 +6,7 @@ namespace Cargoman
     {
         public void PlaySoundStep()
         {
-            Debug.Log("Step sound ...");
+            //Debug.Log("Step sound ...");
         }
     }
 }
