@@ -4,11 +4,23 @@ namespace Cargoman
 {
     public class CargoReceiver : MonoBehaviour, IReceiver
     {
-        [SerializeField] private Transform cargoTransform;
+        [SerializeField] private Transform _cargoTransform;
+
+        private ReceiverOrderManager _orderManager;
+
+        private void Awake()
+        {
+            _orderManager = GetComponent<ReceiverOrderManager>();
+        }
 
         public Transform GetCargoTransform()
         {
-            return cargoTransform;
+            return _cargoTransform;
+        }
+
+        public void ReceiveCargo(IPickable cargo)
+        {
+            _orderManager.CheckCargo(cargo);
         }
     }
 }

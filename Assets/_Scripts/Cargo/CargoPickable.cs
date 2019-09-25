@@ -5,6 +5,8 @@ namespace Cargoman
     [RequireComponent(typeof(Rigidbody))]
     public class CargoPickable : MonoBehaviour, IPickable
     {
+        [SerializeField] private CargoType _cargoType;
+        public CargoType cargoType { get => _cargoType; }
         public bool CanBePickable { get; set; }
         private Transform _transform;
         private Rigidbody _rigidbody;
