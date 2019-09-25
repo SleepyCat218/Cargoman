@@ -8,8 +8,7 @@ namespace Cargoman
     {
         
         [SerializeField] private Queue<CargoType> _orderQueue = new Queue<CargoType>();
-        [SerializeField] private Orders _orders;
-        [SerializeField] private float _timeToGetNewOrder = 3f, _timerPercentForRedLight = 25;
+        [SerializeField] private float _minTimeToGetNewOrder = 5f, _maxTimeToGetNewOrder = 15f, _timerPercentForRedLight = 25, _timePerOneCargo = 60f;
 
         [SerializeField] private Light _waitLight, _failOrderSoonLight;
         [SerializeField] private bool _redLightTurnedOn = false;
@@ -17,19 +16,20 @@ namespace Cargoman
 
         private bool _canGetCargo = true;
         private float _orderTimer = 10f;
-        private Coroutine orderTimerCoroutine;
-        private Coroutine failLightCoroutine;
-        private float startIntencity;
+        private Coroutine _orderTimerCoroutine;
+        private Coroutine _failLightCoroutine;
+        private float _startIntencity;
+        private int _scoreReward;
 
         public void SetOrderQueue()
         {
-            _orderQueue = _orders.GetOrder();
+            _orderQueue = SetOrder();
         }
 
         private void Awake()
         {
             StartCoroutine(GetNewOrder());
-            startIntencity = _failOrderSoonLight.intensity;
+            _startIntencity = _failOrderSoonLight.intensity;
         }
 
         public void CheckCargo(IPickable cargo)
@@ -54,7 +54,7 @@ namespace Cargoman
 
         private void StopConveyorWork()
         {
-            StopCoroutine(orderTimerCoroutine);
+            StopCoroutine(_orderTimerCoroutine);
             StartCoroutine(GetNewOrder());
             _canGetCargo = false;
             TurnOffAllLights();
@@ -62,6 +62,7 @@ namespace Cargoman
 
         private void OrderComplete()
         {
+            ScoreManager.Instance.AddScore(_scoreReward);
             Debug.Log("complete");
             StopConveyorWork();
         }
@@ -70,6 +71,21 @@ namespace Cargoman
         {
             Debug.Log("OrderCancel");
             StopConveyorWork();
+        }
+
+        private Queue<CargoType> SetOrder()
+        {
+            Queue<CargoType> newQueue = new Queue<CargoType>();
+            int cargoInOrder = CalculateCargoInOrder(ScoreManager.Instance.Score);
+            for (int i = 0; i < cargoInOrder; i++)
+            {
+                CargoType type = (CargoType)Random.Range(0, System.Enum.GetValues(typeof(CargoType)).Length);
+                Debug.Log(type);
+                newQueue.Enqueue(type);
+            }
+            _scoreReward = CalculateOrderReward(cargoInOrder);
+            _orderTimer = CalculateOrderTimer(cargoInOrder);
+            return newQueue;
         }
 
         #region "Lights";
@@ -84,14 +100,14 @@ namespace Cargoman
 
         private void TurnOffFailLight()
         {
-            StopCoroutine(failLightCoroutine);
+            StopCoroutine(_failLightCoroutine);
             _failOrderSoonLight.enabled = false;
             _redLightTurnedOn = false;
         }
 
         private void TurnOnFailLight()
         {
-            failLightCoroutine = StartCoroutine(TurnOnFailLightCoroutine());
+            _failLightCoroutine = StartCoroutine(TurnOnFailLightCoroutine());
         }
 
         private IEnumerator TurnOnFailLightCoroutine()
@@ -119,7 +135,7 @@ namespace Cargoman
                         intencityDir = false;
                     }
                 }
-                _failOrderSoonLight.intensity = (timer / failLightFreq) * startIntencity;
+                _failOrderSoonLight.intensity = (timer / failLightFreq) * _startIntencity;
                 yield return null;
             }
         }
@@ -127,11 +143,11 @@ namespace Cargoman
 
         private IEnumerator GetNewOrder()
         {
-            yield return new WaitForSeconds(_timeToGetNewOrder);
+            yield return new WaitForSeconds(Random.Range(_minTimeToGetNewOrder, _maxTimeToGetNewOrder));
             SetOrderQueue();
             _waitLight.enabled = true;
             _canGetCargo = true;
-            orderTimerCoroutine = StartCoroutine(StartOrderTimer());
+            _orderTimerCoroutine = StartCoroutine(StartOrderTimer());
         }
 
         private IEnumerator StartOrderTimer()
@@ -149,6 +165,28 @@ namespace Cargoman
                 yield return null;
             }
             OrderCancel();
+        }
+
+        private float CalculateOrderTimer(int cargoCount)
+        {
+            float timer = cargoCount * _timePerOneCargo;
+            return timer;
+        }
+
+        private int CalculateOrderReward(int cargoCount)
+        {
+            int reward = cargoCount * 5;
+            return reward;
+        }
+
+        private int CalculateCargoInOrder(int scoreValue)
+        {
+            if (scoreValue <= 10)
+            {
+                return 1;
+            }
+            int cargoInOrder = scoreValue / 10;
+            return cargoInOrder;
         }
     }
 }
