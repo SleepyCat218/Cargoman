@@ -11,7 +11,10 @@ namespace Cargoman
         [SerializeField] private Transform _cargoSpawner;
         [SerializeField] private List<GameObject> _cargoList = new List<GameObject>();
 
+        private List<CargoTypeStruct> _cargoTypes = new List<CargoTypeStruct>();
         private Transform _currentCargo;
+
+        public List<CargoTypeStruct> CargoTypes { get => _cargoTypes; }
 
         public IEnumerator SpawnCargo()
         {
@@ -42,6 +45,16 @@ namespace Cargoman
         public void ClearCurrentCargo()
         {
             _currentCargo = null;
+        }
+
+        private void Awake()
+        {
+            foreach (var item in _cargoList)
+            {
+                CargoPickable pickable = item.GetComponent<CargoPickable>();
+
+                _cargoTypes.Add(new CargoTypeStruct(pickable.cargoType, pickable.CargoImage));
+            }
         }
     }
 }

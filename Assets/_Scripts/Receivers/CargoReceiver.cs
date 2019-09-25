@@ -18,7 +18,7 @@ namespace Cargoman
             return _cargoTransform;
         }
 
-        public void ReceiveCargo(IPickable cargo)
+        public void ReceiveCargo(ICargo cargo)
         {
             _orderManager.CheckCargo(cargo);
         }

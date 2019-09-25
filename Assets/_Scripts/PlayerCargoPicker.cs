@@ -11,15 +11,15 @@ namespace Cargoman
         [SerializeField] private float _pickAnimationDelay = 1.06f, _putAnimationDelay = 1.06f, _dropAnimationDelay = 0.2f;
 
 
-        private IPickable _possiblePick;
-        private IPickable _pickedCargo;
+        private ICargo _possiblePick;
+        private ICargo _pickedCargo;
         private IReceiver _cargoReceiver;
         private bool _canInteract = true;
 
         private void OnTriggerEnter(Collider other)
         {
             IReceiver cargoReceiver = other.GetComponent<IReceiver>();
-            IPickable cargo = other.GetComponent<IPickable>();
+            ICargo cargo = other.GetComponent<ICargo>();
 
             if (cargoReceiver != null)
             {
@@ -36,7 +36,7 @@ namespace Cargoman
         private void OnTriggerExit(Collider other)
         {
             IReceiver cargoReceiver = other.GetComponent<IReceiver>();
-            IPickable cargo = other.GetComponent<IPickable>();
+            ICargo cargo = other.GetComponent<ICargo>();
 
             if (cargoReceiver != null)
             {
@@ -50,7 +50,7 @@ namespace Cargoman
 
         }
 
-        private IEnumerator PickCargo(PlayerMovementController playerMovement, IPickable pickableObject)
+        private IEnumerator PickCargo(PlayerMovementController playerMovement, ICargo pickableObject)
         {
             yield return new WaitForSeconds(_pickDelay);
             _pickedCargo = pickableObject.Pick(cargoParentTransform);
@@ -60,7 +60,7 @@ namespace Cargoman
             _canInteract = true;
         }
 
-        private IEnumerator DropCargo(PlayerMovementController playerMovement, IPickable objectToDrop)
+        private IEnumerator DropCargo(PlayerMovementController playerMovement, ICargo objectToDrop)
         {
             yield return new WaitForSeconds(_dropDelay);
             objectToDrop.DropCargo();
@@ -70,7 +70,7 @@ namespace Cargoman
             _canInteract = true;
         }
 
-        private IEnumerator PutCargo(PlayerMovementController playerMovement, IPickable objectToPut)
+        private IEnumerator PutCargo(PlayerMovementController playerMovement, ICargo objectToPut)
         {
             yield return new WaitForSeconds(_putDelay);
             objectToPut.PutCargo(_cargoReceiver.GetCargoTransform());

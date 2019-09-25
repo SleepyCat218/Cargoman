@@ -216,5 +216,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f18ceb76fe90df84a96fa18c685fc5d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _cargoImage: {fileID: 21300000, guid: 6ac2f6e18622c8d42b31f42412a1a0e2, type: 3}
   _cargoType: 1
   _timeToDestroy: 2

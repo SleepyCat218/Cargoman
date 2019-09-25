@@ -1,25 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Cargoman
 {
     public class ReceiverOrderManager : MonoBehaviour
     {
-        
-        [SerializeField] private Queue<CargoType> _orderQueue = new Queue<CargoType>();
+        [SerializeField] private CargoSubmitter _submitter;
+        [SerializeField] private GameObject _receiverGui;
+        [SerializeField] private Transform _receiversParentGui;
         [SerializeField] private float _minTimeToGetNewOrder = 5f, _maxTimeToGetNewOrder = 15f, _timerPercentForRedLight = 25, _timePerOneCargo = 60f;
-
         [SerializeField] private Light _waitLight, _failOrderSoonLight;
         [SerializeField] private bool _redLightTurnedOn = false;
         [SerializeField] private float failLightFreq = 2f;
 
+        private Queue<CargoTypeStruct> _orderQueue = new Queue<CargoTypeStruct>();
         private bool _canGetCargo = true;
         private float _orderTimer = 10f;
         private Coroutine _orderTimerCoroutine;
         private Coroutine _failLightCoroutine;
         private float _startIntencity;
         private int _scoreReward;
+        private ReceiverGuiPanelScript _guiScript;
+        //private List<CargoTypeStruct> _cargoTypeStruct = new List<CargoTypeStruct>();
 
         public void SetOrderQueue()
         {
@@ -30,30 +34,39 @@ namespace Cargoman
         {
             StartCoroutine(GetNewOrder());
             _startIntencity = _failOrderSoonLight.intensity;
+            GameObject gui = Instantiate(_receiverGui, _receiversParentGui);
+            _guiScript = gui.GetComponent<ReceiverGuiPanelScript>();
+            
         }
 
-        public void CheckCargo(IPickable cargo)
+        public void CheckCargo(ICargo cargo)
         {
             if (!_canGetCargo || _orderQueue.Count == 0)
             {
                 return;
             }
 
-            if (cargo.cargoType != _orderQueue.Peek())
+            if (cargo.cargoType != _orderQueue.Peek().cargoType)
             {
                 OrderCancel();
                 return;
             }
 
             _orderQueue.Dequeue();
+            _guiScript.UpdateCargoLeftValue(_orderQueue.Count);
             if (_orderQueue.Count == 0)
             {
                 OrderComplete();
+                return;
             }
+            _guiScript.UpdateCargoImage(_orderQueue.Peek().cargoImage);
         }
 
         private void StopConveyorWork()
         {
+            _guiScript.UpdateCargoImage(null);
+            _guiScript.UpdateCargoLeftValue(0);
+            _guiScript.UpdateOrderTimer(0, 0);
             StopCoroutine(_orderTimerCoroutine);
             StartCoroutine(GetNewOrder());
             _canGetCargo = false;
@@ -63,26 +76,27 @@ namespace Cargoman
         private void OrderComplete()
         {
             ScoreManager.Instance.AddScore(_scoreReward);
-            Debug.Log("complete");
             StopConveyorWork();
         }
 
         private void OrderCancel()
         {
-            Debug.Log("OrderCancel");
             StopConveyorWork();
         }
 
-        private Queue<CargoType> SetOrder()
+        private Queue<CargoTypeStruct> SetOrder()
         {
-            Queue<CargoType> newQueue = new Queue<CargoType>();
+            Queue<CargoTypeStruct> newQueue = new Queue<CargoTypeStruct>();
             int cargoInOrder = CalculateCargoInOrder(ScoreManager.Instance.Score);
             for (int i = 0; i < cargoInOrder; i++)
             {
-                CargoType type = (CargoType)Random.Range(0, System.Enum.GetValues(typeof(CargoType)).Length);
-                Debug.Log(type);
+                CargoTypeStruct type = _submitter.CargoTypes[Random.Range(0, _submitter.CargoTypes.Count)];
                 newQueue.Enqueue(type);
             }
+
+            _guiScript.UpdateCargoImage(newQueue.Peek().cargoImage);
+            _guiScript.UpdateOrderTimer(_orderTimer, _orderTimer);
+            _guiScript.UpdateCargoLeftValue(cargoInOrder);
             _scoreReward = CalculateOrderReward(cargoInOrder);
             _orderTimer = CalculateOrderTimer(cargoInOrder);
             return newQueue;
@@ -152,7 +166,7 @@ namespace Cargoman
 
         private IEnumerator StartOrderTimer()
         {
-            float timer = _orderTimer;
+            float timer = _orderTimer, oldTimer = timer;
             float redLightStart = _orderTimer * _timerPercentForRedLight / 100;
             while (timer >= 0)
             {
@@ -161,7 +175,12 @@ namespace Cargoman
                     TurnOnFailLight();
                 }
                 timer -= Time.deltaTime;
-                Debug.Log(timer);
+                if ((int)timer != (int)oldTimer)
+                {
+                    _guiScript.UpdateOrderTimer(timer, _orderTimer);
+                }
+                oldTimer = timer;
+
                 yield return null;
             }
             OrderCancel();

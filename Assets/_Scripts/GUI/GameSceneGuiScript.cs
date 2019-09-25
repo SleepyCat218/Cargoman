@@ -1,17 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class GameSceneGuiScript : MonoBehaviour
+namespace Cargoman
 {
-    [SerializeField] private Text _scoreValue;
-
-    void Start()
+    public class GameSceneGuiScript : MonoBehaviour
     {
-        ScoreManager.Instance.SetGuiScript(this);
-    }
+        [SerializeField] private Text _scoreValue, _timerValue;
+        [SerializeField] private Image _timerImage;
 
-    public void UpdateScore(int score)
-    {
-        _scoreValue.text = score.ToString();
+        public void UpdateTimer(float timer, float startTimeValue)
+        {
+            _timerValue.text = ((int)timer).ToString();
+            _timerImage.fillAmount = timer / startTimeValue;
+        }
+
+        public void UpdateScore(int score)
+        {
+            _scoreValue.text = score.ToString();
+        }
     }
 }
