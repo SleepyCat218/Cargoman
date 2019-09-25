@@ -35,7 +35,7 @@ namespace Cargoman
             {
                 Destroy(gameObject);
             }
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
 
         public void AddScore(int scoreValue)
