@@ -2,7 +2,7 @@
 
 namespace Cargoman
 {
-    public interface ICargo
+    public interface ICargo : IInteractable
     {
         Sprite CargoImage { get; }
         CargoType cargoType { get; }

@@ -12,7 +12,9 @@ namespace Cargoman
         public bool CanBePickable { get; set; }
         private Transform _transform;
         private Rigidbody _rigidbody;
+        private ParticleSystem _highlightParticles;
         [SerializeField] private float _timeToDestroy = 2f;
+        [SerializeField] private string _trashLayer = "Trash";
 
         public delegate void CleanSubmitterQueueDelegate();
         public CleanSubmitterQueueDelegate cleanSubmitterQueue; 
@@ -48,6 +50,7 @@ namespace Cargoman
             _transform.rotation = cargoTransform.rotation;
             IMovable cargoMovable = GetComponent<IMovable>();
             cargoMovable.SwitchMoving(true);
+            Destroy(gameObject, _timeToDestroy);
         }
 
         private void Awake()
@@ -55,6 +58,7 @@ namespace Cargoman
             _transform = transform;
             _rigidbody = GetComponent<Rigidbody>();
             CanBePickable = true;
+            _highlightParticles = GetComponent<ParticleSystem>();
         }
 
         private void DestroyCargo()
@@ -65,6 +69,31 @@ namespace Cargoman
                 Collider col = child.gameObject.AddComponent<BoxCollider>();
             }
             Destroy(gameObject, _timeToDestroy);
+
+            int newLayer = LayerMask.NameToLayer(_trashLayer);
+            if (newLayer <= 31 && newLayer >= 0)
+            {
+                foreach (Transform item in _transform)
+                {
+                    item.gameObject.layer = newLayer;
+                }
+                gameObject.layer = newLayer;
+            }
+        }
+
+        public float GetSqrMagnitude(Transform playerTransform)
+        {
+            return (_transform.position - playerTransform.position).sqrMagnitude;
+        }
+
+        public void HighlightObject()
+        {
+            _highlightParticles.Play();
+        }
+
+        public void StopHightlightObject()
+        {
+            _highlightParticles.Stop();
         }
     }
 }

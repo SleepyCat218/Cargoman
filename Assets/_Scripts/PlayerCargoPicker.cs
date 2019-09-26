@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Cargoman
@@ -11,9 +12,42 @@ namespace Cargoman
         [SerializeField] private float _pickAnimationDelay = 1.06f, _putAnimationDelay = 1.06f, _dropAnimationDelay = 0.2f;
 
 
-        private ICargo _possiblePick;
+        private List<ICargo> _possiblePicks = new List<ICargo>();
+        private ICargo _currentPick;
+        private ICargo CurrentPick
+        {
+            get => _currentPick;
+            set
+            {
+                if (_currentPick != value)
+                {
+                    _currentPick?.StopHightlightObject();
+                    _currentPick = value;
+                    if (_pickedCargo == null)
+                    {
+                        _currentPick?.HighlightObject();
+                    }
+                }
+            }
+        }
         private ICargo _pickedCargo;
+
         private IReceiver _cargoReceiver;
+        private IReceiver CargoReceiver
+        {
+            get => _cargoReceiver;
+            set
+            {
+                if (_cargoReceiver != value)
+                {
+                    _cargoReceiver?.StopHightlightObject();
+                    _cargoReceiver = value;
+                    _cargoReceiver?.HighlightObject();
+                }
+            }
+        }
+        private List<IReceiver> _possibleReceivers = new List<IReceiver>();
+
         private bool _canInteract = true;
 
         private void OnTriggerEnter(Collider other)
@@ -23,14 +57,41 @@ namespace Cargoman
 
             if (cargoReceiver != null)
             {
-                _cargoReceiver = cargoReceiver;
+                _possibleReceivers.Add(cargoReceiver);
             }
 
-            if (cargo != null && _possiblePick == null)
+            if (cargo != null && cargo.CanBePickable)
             {
-                _possiblePick = cargo;
+                _possiblePicks.Add(cargo);
             }
+        }
 
+        private void Update()
+        {
+            if(_possiblePicks.Count > 0 && _pickedCargo == null)
+            {
+                CurrentPick = GetClosiestObject<ICargo>(_possiblePicks);
+            }
+            if(_possibleReceivers.Count > 0)
+            {
+                CargoReceiver = GetClosiestObject<IReceiver>(_possibleReceivers);
+            }
+        }
+
+        private T GetClosiestObject<T>(List<T> possibleObjects) where T : IInteractable
+        {
+            T closiestCargo = default(T);
+            float minSqrDistance = Mathf.Infinity;
+            foreach (var item in possibleObjects)
+            {
+                float sqrDistance = item.GetSqrMagnitude(transform);
+                if (sqrDistance < minSqrDistance)
+                {
+                    minSqrDistance = sqrDistance;
+                    closiestCargo = item;
+                }
+            }
+            return closiestCargo;
         }
 
         private void OnTriggerExit(Collider other)
@@ -40,21 +101,24 @@ namespace Cargoman
 
             if (cargoReceiver != null)
             {
-                _cargoReceiver = null;
+                _possibleReceivers.Remove(cargoReceiver);
+                CargoReceiver = null;
             }
 
             if (cargo != null)
             {
-                _possiblePick = null;
+                _possiblePicks.Remove(cargo);
+                CurrentPick = null;
             }
 
         }
 
         private IEnumerator PickCargo(PlayerMovementController playerMovement, ICargo pickableObject)
         {
+            _possiblePicks.Remove(pickableObject);
             yield return new WaitForSeconds(_pickDelay);
             _pickedCargo = pickableObject.Pick(cargoParentTransform);
-            _possiblePick = null;
+            CurrentPick = null;
             yield return new WaitForSeconds(Mathf.Abs(_pickAnimationDelay - _pickDelay));
             playerMovement.CanMove = true;
             _canInteract = true;
@@ -62,9 +126,10 @@ namespace Cargoman
 
         private IEnumerator DropCargo(PlayerMovementController playerMovement, ICargo objectToDrop)
         {
+            _pickedCargo = null;
+            _possiblePicks.Remove(objectToDrop);
             yield return new WaitForSeconds(_dropDelay);
             objectToDrop.DropCargo();
-            _pickedCargo = null;
             yield return new WaitForSeconds(Mathf.Abs(_dropAnimationDelay - _dropDelay));
             playerMovement.CanMove = true;
             _canInteract = true;
@@ -72,10 +137,11 @@ namespace Cargoman
 
         private IEnumerator PutCargo(PlayerMovementController playerMovement, ICargo objectToPut)
         {
-            yield return new WaitForSeconds(_putDelay);
-            objectToPut.PutCargo(_cargoReceiver.GetCargoTransform());
-            _cargoReceiver.ReceiveCargo(objectToPut);
             _pickedCargo = null;
+            _possiblePicks.Remove(objectToPut);
+            yield return new WaitForSeconds(_putDelay);
+            objectToPut.PutCargo(CargoReceiver.GetCargoTransform());
+            CargoReceiver.ReceiveCargo(objectToPut);
             yield return new WaitForSeconds(Mathf.Abs(_putAnimationDelay - _putDelay));
             playerMovement.CanMove = true;
             _canInteract = true;
@@ -92,7 +158,7 @@ namespace Cargoman
             {
                 _canInteract = false;
                 playerMovement.CanMove = false;
-                if (_cargoReceiver == null)
+                if (CargoReceiver == null)
                 {
                     DropAnimation();
                     StartCoroutine(DropCargo(playerMovement, _pickedCargo));
@@ -103,12 +169,12 @@ namespace Cargoman
                     StartCoroutine(PutCargo(playerMovement, _pickedCargo));
                 }
             }
-            else if(_possiblePick != null && _possiblePick.CanBePickable)
+            else if(CurrentPick != null && CurrentPick.CanBePickable)
             {
                 playerMovement.CanMove = false;
                 _canInteract = false;
                 PickAnimation();
-                StartCoroutine(PickCargo(playerMovement, _possiblePick));
+                StartCoroutine(PickCargo(playerMovement, CurrentPick));
             }
 
         }
