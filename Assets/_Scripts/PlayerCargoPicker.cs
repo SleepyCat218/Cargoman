@@ -121,6 +121,8 @@ namespace Cargoman
             CurrentPick = null;
             yield return new WaitForSeconds(Mathf.Abs(_pickAnimationDelay - _pickDelay));
             playerMovement.CanMove = true;
+            playerMovement.SpeedModifier = pickableObject.SpeedModifier;
+            playerMovement.CargoHolder = true;
             _canInteract = true;
         }
 
@@ -132,6 +134,8 @@ namespace Cargoman
             objectToDrop.DropCargo();
             yield return new WaitForSeconds(Mathf.Abs(_dropAnimationDelay - _dropDelay));
             playerMovement.CanMove = true;
+            playerMovement.SpeedModifier = 1f;
+            playerMovement.CargoHolder = false;
             _canInteract = true;
         }
 
@@ -144,6 +148,8 @@ namespace Cargoman
             CargoReceiver.ReceiveCargo(objectToPut);
             yield return new WaitForSeconds(Mathf.Abs(_putAnimationDelay - _putDelay));
             playerMovement.CanMove = true;
+            playerMovement.SpeedModifier = 1f;
+            playerMovement.CargoHolder = false;
             _canInteract = true;
         }
 

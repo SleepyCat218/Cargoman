@@ -5,6 +5,12 @@ namespace Cargoman
     [RequireComponent(typeof(Rigidbody))]
     public class CargoPickable : MonoBehaviour, ICargo
     {
+        [SerializeField] private float _speedModifier = 1f;
+        public float SpeedModifier
+        {
+            get => _speedModifier;
+        }
+
         [SerializeField] private Sprite _cargoImage;
         [SerializeField] private CargoType _cargoType;
         public CargoType cargoType { get => _cargoType; }

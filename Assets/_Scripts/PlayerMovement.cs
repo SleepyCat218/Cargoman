@@ -9,7 +9,7 @@ namespace Cargoman
         private bool _canMove;
         private CharacterController _characterController;
 
-        [SerializeField] private float _speed = 5f;
+        [SerializeField] private float _speed = 5f, _cargoHolderModifier = 0.3f;
         [SerializeField] private float _rotationSpeed = 5f;
         [SerializeField] private Animator _animator;
 
@@ -19,12 +19,17 @@ namespace Cargoman
             _characterController = GetComponent<CharacterController>();
         }
 
+        public void SetMovementAnimationSpeed(float animationSpeed)
+        {
+            _animator.SetFloat("BootsSpeed", animationSpeed);
+        }
+
         private void AnimateMove(float moveForwardValue)
         {
             _animator.SetFloat("MoveSpeed", moveForwardValue);
         }
 
-        public void Move(float moveForwardValue, float timescaleMultiplier = 1)
+        public void Move(float moveForwardValue, float cargoModifier, bool cargoHolder, float timescaleMultiplier = 1)
         {
             if (_characterController == null || !_canMove)
             {
@@ -37,7 +42,12 @@ namespace Cargoman
             {
                 movementVector.Normalize();
             }
-            movementVector = transform.TransformDirection(movementVector) * _speed + (Vector3.up * gravityConst);
+            movementVector = transform.TransformDirection(movementVector) * _speed * cargoModifier;
+            if(cargoHolder)
+            {
+                movementVector *= _cargoHolderModifier;
+            }
+            movementVector += Vector3.up * gravityConst;
             _characterController.Move(movementVector * timescaleMultiplier);
         }
 

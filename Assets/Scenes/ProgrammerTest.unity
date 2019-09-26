@@ -19438,6 +19438,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 4
+  _cargoHolderModifier: 0.3
   _rotationSpeed: 270
   _animator: {fileID: 532599585}
 --- !u!143 &1010750496
@@ -19470,6 +19471,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7121aa455410a8a40b9cc29589dbe057, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speedModifier: 1
+  CargoHolder: 0
 --- !u!114 &1010750498
 MonoBehaviour:
   m_ObjectHideFlags: 0
