@@ -154,7 +154,6 @@ namespace Cargoman
                 return;
             }
 
-            Debug.Log(_pickedCargo == null);
             if (_pickedCargo != null)
             {
                 _canInteract = false;

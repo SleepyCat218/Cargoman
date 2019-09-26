@@ -14,6 +14,7 @@ namespace Cargoman
         private Rigidbody _rigidbody;
         private ParticleSystem _highlightParticles;
         [SerializeField] private float _timeToDestroy = 2f;
+        [SerializeField] private string _trashLayer = "Trash";
 
         public delegate void CleanSubmitterQueueDelegate();
         public CleanSubmitterQueueDelegate cleanSubmitterQueue; 
@@ -49,6 +50,7 @@ namespace Cargoman
             _transform.rotation = cargoTransform.rotation;
             IMovable cargoMovable = GetComponent<IMovable>();
             cargoMovable.SwitchMoving(true);
+            Destroy(gameObject, _timeToDestroy);
         }
 
         private void Awake()
@@ -67,6 +69,16 @@ namespace Cargoman
                 Collider col = child.gameObject.AddComponent<BoxCollider>();
             }
             Destroy(gameObject, _timeToDestroy);
+
+            int newLayer = LayerMask.NameToLayer(_trashLayer);
+            if (newLayer <= 31 && newLayer >= 0)
+            {
+                foreach (Transform item in _transform)
+                {
+                    item.gameObject.layer = newLayer;
+                }
+                gameObject.layer = newLayer;
+            }
         }
 
         public float GetSqrMagnitude(Transform playerTransform)

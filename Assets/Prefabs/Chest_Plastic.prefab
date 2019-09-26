@@ -220,7 +220,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cargoImage: {fileID: 21300000, guid: 6ac2f6e18622c8d42b31f42412a1a0e2, type: 3}
   _cargoType: 1
-  _timeToDestroy: 2
+  _timeToDestroy: 5
+  _trashLayer: Trash
 --- !u!199 &1126957232647327546
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -367,7 +368,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.2
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -1117,7 +1118,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 200
+      scalar: 400
       minScalar: 10
       maxCurve:
         serializedVersion: 2
