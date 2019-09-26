@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Cargoman
 {
@@ -23,7 +22,6 @@ namespace Cargoman
         private float _startIntencity;
         private int _scoreReward;
         private ReceiverGuiPanelScript _guiScript;
-        //private List<CargoTypeStruct> _cargoTypeStruct = new List<CargoTypeStruct>();
 
         public void SetOrderQueue()
         {
@@ -34,9 +32,12 @@ namespace Cargoman
         {
             StartCoroutine(GetNewOrder());
             _startIntencity = _failOrderSoonLight.intensity;
+        }
+
+        public void CreateReceiverGui()
+        {
             GameObject gui = Instantiate(_receiverGui, _receiversParentGui);
             _guiScript = gui.GetComponent<ReceiverGuiPanelScript>();
-            
         }
 
         public void CheckCargo(ICargo cargo)

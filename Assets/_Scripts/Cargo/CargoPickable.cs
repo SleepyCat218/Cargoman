@@ -12,6 +12,7 @@ namespace Cargoman
         public bool CanBePickable { get; set; }
         private Transform _transform;
         private Rigidbody _rigidbody;
+        private ParticleSystem _highlightParticles;
         [SerializeField] private float _timeToDestroy = 2f;
 
         public delegate void CleanSubmitterQueueDelegate();
@@ -55,6 +56,7 @@ namespace Cargoman
             _transform = transform;
             _rigidbody = GetComponent<Rigidbody>();
             CanBePickable = true;
+            _highlightParticles = GetComponent<ParticleSystem>();
         }
 
         private void DestroyCargo()
@@ -65,6 +67,21 @@ namespace Cargoman
                 Collider col = child.gameObject.AddComponent<BoxCollider>();
             }
             Destroy(gameObject, _timeToDestroy);
+        }
+
+        public float GetSqrMagnitude(Transform playerTransform)
+        {
+            return (_transform.position - playerTransform.position).sqrMagnitude;
+        }
+
+        public void HighlightObject()
+        {
+            _highlightParticles.Play();
+        }
+
+        public void StopHightlightObject()
+        {
+            _highlightParticles.Stop();
         }
     }
 }

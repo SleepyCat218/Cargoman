@@ -2,7 +2,7 @@
 
 namespace Cargoman
 {
-    public interface IReceiver
+    public interface IReceiver : IInteractable
     {
         Transform GetCargoTransform();
         void ReceiveCargo(ICargo cargo);
