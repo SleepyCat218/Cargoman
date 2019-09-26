@@ -16,6 +16,20 @@ namespace Cargoman
 
         public List<CargoTypeStruct> CargoTypes { get => _cargoTypes; }
 
+        private void Awake()
+        {
+            foreach (var item in _cargoList)
+            {
+                CargoPickable pickable = item.GetComponent<CargoPickable>();
+                _cargoTypes.Add(new CargoTypeStruct(pickable.cargoType, pickable.CargoImage));
+            }
+        }
+
+        private void Start()
+        {
+            StartCoroutine(SpawnCargo());
+        }
+
         public IEnumerator SpawnCargo()
         {
             yield return new WaitForSeconds(_cargoStartWait);
@@ -37,24 +51,9 @@ namespace Cargoman
             }
         }
 
-        private void Start()
-        {
-            StartCoroutine(SpawnCargo());
-        }
-
         public void ClearCurrentCargo()
         {
             _currentCargo = null;
-        }
-
-        private void Awake()
-        {
-            foreach (var item in _cargoList)
-            {
-                CargoPickable pickable = item.GetComponent<CargoPickable>();
-
-                _cargoTypes.Add(new CargoTypeStruct(pickable.cargoType, pickable.CargoImage));
-            }
         }
     }
 }

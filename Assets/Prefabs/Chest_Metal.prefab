@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 7458716166761732854}
   - component: {fileID: 1974501725925276388}
   - component: {fileID: 1974501725925276393}
-  - component: {fileID: 1974501725925276392}
   - component: {fileID: 1974501725925276387}
+  - component: {fileID: 1974501725925276392}
   - component: {fileID: 2211107968369201208}
   - component: {fileID: 3938636637556529527}
   m_Layer: 0
@@ -114,22 +114,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.97217274, y: 0.34807304, z: 0.57296556}
   m_Center: {x: -0.00000005960464, y: 0.1762154, z: 0.038501594}
---- !u!114 &1974501725925276392
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7481192041680345718}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f18ceb76fe90df84a96fa18c685fc5d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _cargoImage: {fileID: 21300000, guid: 498ad6aecfbed2b41bfc00c8aa39f7f6, type: 3}
-  _cargoType: 0
-  _timeToDestroy: 5
-  _trashLayer: Trash
 --- !u!114 &1974501725925276387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,6 +128,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _needMove: 1
   _speed: 2
+--- !u!114 &1974501725925276392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7481192041680345718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f18ceb76fe90df84a96fa18c685fc5d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _speedModifier: 0.5
+  _cargoImage: {fileID: 21300000, guid: 498ad6aecfbed2b41bfc00c8aa39f7f6, type: 3}
+  _cargoType: 0
+  _timeToDestroy: 5
+  _trashLayer: Trash
 --- !u!199 &2211107968369201208
 ParticleSystemRenderer:
   serializedVersion: 6

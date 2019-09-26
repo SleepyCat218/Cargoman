@@ -23,85 +23,19 @@ namespace Cargoman
         private int _scoreReward;
         private ReceiverGuiPanelScript _guiScript;
 
-        public void SetOrderQueue()
-        {
-            _orderQueue = SetOrder();
-        }
-
         private void Awake()
         {
             StartCoroutine(GetNewOrder());
             _startIntencity = _failOrderSoonLight.intensity;
         }
 
+        #region "GUI"
         public void CreateReceiverGui()
         {
             GameObject gui = Instantiate(_receiverGui, _receiversParentGui);
             _guiScript = gui.GetComponent<ReceiverGuiPanelScript>();
         }
-
-        public void CheckCargo(ICargo cargo)
-        {
-            if (!_canGetCargo || _orderQueue.Count == 0)
-            {
-                return;
-            }
-
-            if (cargo.cargoType != _orderQueue.Peek().cargoType)
-            {
-                OrderCancel();
-                return;
-            }
-
-            _orderQueue.Dequeue();
-            _guiScript.UpdateCargoLeftValue(_orderQueue.Count);
-            if (_orderQueue.Count == 0)
-            {
-                OrderComplete();
-                return;
-            }
-            _guiScript.UpdateCargoImage(_orderQueue.Peek().cargoImage);
-        }
-
-        private void StopConveyorWork()
-        {
-            _guiScript.UpdateCargoImage(null);
-            _guiScript.UpdateCargoLeftValue(0);
-            _guiScript.UpdateOrderTimer(0, 0);
-            StopCoroutine(_orderTimerCoroutine);
-            StartCoroutine(GetNewOrder());
-            _canGetCargo = false;
-            TurnOffAllLights();
-        }
-
-        private void OrderComplete()
-        {
-            ScoreManager.Instance.AddScore(_scoreReward);
-            StopConveyorWork();
-        }
-
-        private void OrderCancel()
-        {
-            StopConveyorWork();
-        }
-
-        private Queue<CargoTypeStruct> SetOrder()
-        {
-            Queue<CargoTypeStruct> newQueue = new Queue<CargoTypeStruct>();
-            int cargoInOrder = CalculateCargoInOrder(ScoreManager.Instance.Score);
-            for (int i = 0; i < cargoInOrder; i++)
-            {
-                CargoTypeStruct type = _submitter.CargoTypes[Random.Range(0, _submitter.CargoTypes.Count)];
-                newQueue.Enqueue(type);
-            }
-
-            _guiScript.UpdateCargoImage(newQueue.Peek().cargoImage);
-            _guiScript.UpdateOrderTimer(_orderTimer, _orderTimer);
-            _guiScript.UpdateCargoLeftValue(cargoInOrder);
-            _scoreReward = CalculateOrderReward(cargoInOrder);
-            _orderTimer = CalculateOrderTimer(cargoInOrder);
-            return newQueue;
-        }
+        #endregion;
 
         #region "Lights";
         private void TurnOffAllLights()
@@ -156,10 +90,29 @@ namespace Cargoman
         }
         #endregion;
 
+        #region "Order functions";
+        private Queue<CargoTypeStruct> SetOrder()
+        {
+            Queue<CargoTypeStruct> newQueue = new Queue<CargoTypeStruct>();
+            int cargoInOrder = CalculateCargoInOrder(ScoreManager.Instance.Score);
+            for (int i = 0; i < cargoInOrder; i++)
+            {
+                CargoTypeStruct type = _submitter.CargoTypes[Random.Range(0, _submitter.CargoTypes.Count)];
+                newQueue.Enqueue(type);
+            }
+
+            _guiScript.UpdateCargoImage(newQueue.Peek().cargoImage);
+            _guiScript.UpdateOrderTimer(_orderTimer, _orderTimer);
+            _guiScript.UpdateCargoLeftValue(cargoInOrder);
+            _scoreReward = CalculateOrderReward(cargoInOrder);
+            _orderTimer = CalculateOrderTimer(cargoInOrder);
+            return newQueue;
+        }
+
         private IEnumerator GetNewOrder()
         {
             yield return new WaitForSeconds(Random.Range(_minTimeToGetNewOrder, _maxTimeToGetNewOrder));
-            SetOrderQueue();
+            _orderQueue = SetOrder();
             _waitLight.enabled = true;
             _canGetCargo = true;
             _orderTimerCoroutine = StartCoroutine(StartOrderTimer());
@@ -208,5 +161,51 @@ namespace Cargoman
             int cargoInOrder = scoreValue / 10;
             return cargoInOrder;
         }
+
+        private void OrderComplete()
+        {
+            ScoreManager.Instance.AddScore(_scoreReward);
+            StopConveyorWork();
+        }
+
+        private void OrderCancel()
+        {
+            StopConveyorWork();
+        }
+
+        public void CheckCargo(ICargo cargo)
+        {
+            if (!_canGetCargo || _orderQueue.Count == 0)
+            {
+                return;
+            }
+
+            if (cargo.cargoType != _orderQueue.Peek().cargoType)
+            {
+                OrderCancel();
+                return;
+            }
+
+            _orderQueue.Dequeue();
+            _guiScript.UpdateCargoLeftValue(_orderQueue.Count);
+            if (_orderQueue.Count == 0)
+            {
+                OrderComplete();
+                return;
+            }
+            _guiScript.UpdateCargoImage(_orderQueue.Peek().cargoImage);
+        }
+
+        private void StopConveyorWork()
+        {
+            _guiScript.UpdateCargoImage(null);
+            _guiScript.UpdateCargoLeftValue(0);
+            _guiScript.UpdateOrderTimer(0, 0);
+            StopCoroutine(_orderTimerCoroutine);
+            StartCoroutine(GetNewOrder());
+            _canGetCargo = false;
+            TurnOffAllLights();
+        }
+        #endregion;
     }
 }
