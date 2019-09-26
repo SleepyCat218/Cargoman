@@ -5,26 +5,14 @@ namespace Cargoman
     [RequireComponent(typeof(PlayerMovement))]
     public class PlayerMovementController : MonoBehaviour
     {
-        [SerializeField] private float _speedModifier = 1f;
-        public float SpeedModifier
-        {
-            get => _speedModifier;
-            set
-            {
-                if(value <= 0)
-                {
-                    value = 1f;
-                }
-                _speedModifier = value;
-                
-                _movement?.SetMovementAnimationSpeed(_speedModifier);
-            }
-        }
-
         public bool CargoHolder = false;
-        
+
+        [SerializeField] private float _speedModifier = 1f;
+
         private PlayerMovement _movement;
         private bool _canMove = true;
+
+        #region "Properties";
         public bool CanMove
         {
             get
@@ -36,6 +24,22 @@ namespace Cargoman
                 _canMove = value;
             }
         }
+
+        public float SpeedModifier
+        {
+            get => _speedModifier;
+            set
+            {
+                if (value <= 0)
+                {
+                    value = 1f;
+                }
+                _speedModifier = value;
+
+                _movement?.SetMovementAnimationSpeed(_speedModifier);
+            }
+        }
+        #endregion;
 
         private void Awake()
         {

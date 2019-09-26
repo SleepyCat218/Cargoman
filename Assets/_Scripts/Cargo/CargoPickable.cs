@@ -5,26 +5,35 @@ namespace Cargoman
     [RequireComponent(typeof(Rigidbody))]
     public class CargoPickable : MonoBehaviour, ICargo
     {
-        [SerializeField] private float _speedModifier = 1f;
-        public float SpeedModifier
-        {
-            get => _speedModifier;
-        }
+        public delegate void CleanSubmitterQueueDelegate();
+        public CleanSubmitterQueueDelegate cleanSubmitterQueue;
 
+        [SerializeField] private float _speedModifier = 1f;
         [SerializeField] private Sprite _cargoImage;
         [SerializeField] private CargoType _cargoType;
-        public CargoType cargoType { get => _cargoType; }
-        public Sprite CargoImage { get => _cargoImage; }
-        public bool CanBePickable { get; set; }
-        private Transform _transform;
-        private Rigidbody _rigidbody;
-        private ParticleSystem _highlightParticles;
         [SerializeField] private float _timeToDestroy = 2f;
         [SerializeField] private string _trashLayer = "Trash";
 
-        public delegate void CleanSubmitterQueueDelegate();
-        public CleanSubmitterQueueDelegate cleanSubmitterQueue; 
+        private Transform _transform;
+        private Rigidbody _rigidbody;
+        private ParticleSystem _highlightParticles;
 
+        #region "ICargo properties";
+        public float SpeedModifier { get => _speedModifier; }
+        public CargoType cargoType { get => _cargoType; }
+        public Sprite CargoImage { get => _cargoImage; }
+        public bool CanBePickable { get; set; }
+        #endregion;
+
+        private void Awake()
+        {
+            _transform = transform;
+            _rigidbody = GetComponent<Rigidbody>();
+            CanBePickable = true;
+            _highlightParticles = GetComponent<ParticleSystem>();
+        }
+
+        #region "Pick, drop, put and destroy cargo";
         public ICargo Pick(Transform cargoParentTransform)
         {
             CanBePickable = false;
@@ -59,14 +68,6 @@ namespace Cargoman
             Destroy(gameObject, _timeToDestroy);
         }
 
-        private void Awake()
-        {
-            _transform = transform;
-            _rigidbody = GetComponent<Rigidbody>();
-            CanBePickable = true;
-            _highlightParticles = GetComponent<ParticleSystem>();
-        }
-
         private void DestroyCargo()
         {
             foreach (Transform child in transform)
@@ -86,7 +87,9 @@ namespace Cargoman
                 gameObject.layer = newLayer;
             }
         }
+        #endregion;
 
+        #region "IInteractable realization"
         public float GetSqrMagnitude(Transform playerTransform)
         {
             return (_transform.position - playerTransform.position).sqrMagnitude;
@@ -101,5 +104,6 @@ namespace Cargoman
         {
             _highlightParticles.Stop();
         }
+        #endregion
     }
 }

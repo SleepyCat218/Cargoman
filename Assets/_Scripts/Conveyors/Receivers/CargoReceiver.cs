@@ -17,6 +17,7 @@ namespace Cargoman
             _highlightParticles = GetComponent<ParticleSystem>();
         }
 
+        #region "IReceiver realization";
         public Transform GetCargoTransform()
         {
             return _cargoTransform;
@@ -26,7 +27,9 @@ namespace Cargoman
         {
             _orderManager.CheckCargo(cargo);
         }
+        #endregion;
 
+        #region "IInteractable realization";
         public float GetSqrMagnitude(Transform playerTransform)
         {
             return (_transform.position - playerTransform.position).sqrMagnitude;
@@ -41,5 +44,6 @@ namespace Cargoman
         {
             _highlightParticles.Stop();
         }
+        #endregion
     }
 }

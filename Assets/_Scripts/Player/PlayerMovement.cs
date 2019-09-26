@@ -5,13 +5,13 @@ namespace Cargoman
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : MonoBehaviour
     {
-        private const float gravityConst = -9.8f;
-        private bool _canMove;
-        private CharacterController _characterController;
-
         [SerializeField] private float _speed = 5f, _cargoHolderModifier = 0.3f;
         [SerializeField] private float _rotationSpeed = 5f;
         [SerializeField] private Animator _animator;
+
+        private const float gravityConst = -9.8f;
+        private bool _canMove;
+        private CharacterController _characterController;
 
         private void Awake()
         {
@@ -19,16 +19,7 @@ namespace Cargoman
             _characterController = GetComponent<CharacterController>();
         }
 
-        public void SetMovementAnimationSpeed(float animationSpeed)
-        {
-            _animator.SetFloat("BootsSpeed", animationSpeed);
-        }
-
-        private void AnimateMove(float moveForwardValue)
-        {
-            _animator.SetFloat("MoveSpeed", moveForwardValue);
-        }
-
+        #region "Moving and rotating";
         public void Move(float moveForwardValue, float cargoModifier, bool cargoHolder, float timescaleMultiplier = 1)
         {
             if (_characterController == null || !_canMove)
@@ -59,5 +50,18 @@ namespace Cargoman
             }
             transform.Rotate(Vector3.up, rotation * _rotationSpeed * timescaleMultiplier);
         }
+        #endregion;
+
+        #region "Animations";
+        public void SetMovementAnimationSpeed(float animationSpeed)
+        {
+            _animator.SetFloat("BootsSpeed", animationSpeed);
+        }
+
+        private void AnimateMove(float moveForwardValue)
+        {
+            _animator.SetFloat("MoveSpeed", moveForwardValue);
+        }
+        #endregion
     }
 }

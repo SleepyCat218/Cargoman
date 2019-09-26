@@ -4,17 +4,10 @@ namespace Cargoman
 {
     public class ScoreManager : MonoBehaviour
     {
-        private int _score = 0;
         [SerializeField] private GameSceneGuiScript _gui;
-        private static ScoreManager _instance;
 
-        public int Score
-        {
-            get
-            {
-                return _score;
-            }
-        }
+        private int _score = 0;
+        private static ScoreManager _instance;
 
         public static ScoreManager Instance
         {
@@ -24,6 +17,8 @@ namespace Cargoman
             }
             private set { }
         }
+
+        public int Score { get => _score; }
 
         void Awake()
         {

@@ -11,8 +11,11 @@ namespace Cargoman
         [SerializeField] private float _pickDelay = 0.75f, _putDelay = 0.75f, _dropDelay = 0.1f;
         [SerializeField] private float _pickAnimationDelay = 1.06f, _putAnimationDelay = 1.06f, _dropAnimationDelay = 0.2f;
 
+        private bool _canInteract = true;
 
+        #region "Cargo near the player and cargo in player hands";
         private List<ICargo> _possiblePicks = new List<ICargo>();
+        private ICargo _pickedCargo;
         private ICargo _currentPick;
         private ICargo CurrentPick
         {
@@ -30,8 +33,10 @@ namespace Cargoman
                 }
             }
         }
-        private ICargo _pickedCargo;
+        #endregion;
 
+        #region "Receivers near the player";
+        private List<IReceiver> _possibleReceivers = new List<IReceiver>();
         private IReceiver _cargoReceiver;
         private IReceiver CargoReceiver
         {
@@ -46,9 +51,20 @@ namespace Cargoman
                 }
             }
         }
-        private List<IReceiver> _possibleReceivers = new List<IReceiver>();
+        #endregion;
 
-        private bool _canInteract = true;
+        #region "Functions for choose closiest IInteractable (include Update, OnTriggerEnter and OnTriggerExit functions)"
+        private void Update()
+        {
+            if(_possiblePicks.Count > 0 && _pickedCargo == null)
+            {
+                CurrentPick = GetClosiestObject<ICargo>(_possiblePicks);
+            }
+            if(_possibleReceivers.Count > 0)
+            {
+                CargoReceiver = GetClosiestObject<IReceiver>(_possibleReceivers);
+            }
+        }
 
         private void OnTriggerEnter(Collider other)
         {
@@ -64,34 +80,6 @@ namespace Cargoman
             {
                 _possiblePicks.Add(cargo);
             }
-        }
-
-        private void Update()
-        {
-            if(_possiblePicks.Count > 0 && _pickedCargo == null)
-            {
-                CurrentPick = GetClosiestObject<ICargo>(_possiblePicks);
-            }
-            if(_possibleReceivers.Count > 0)
-            {
-                CargoReceiver = GetClosiestObject<IReceiver>(_possibleReceivers);
-            }
-        }
-
-        private T GetClosiestObject<T>(List<T> possibleObjects) where T : IInteractable
-        {
-            T closiestCargo = default(T);
-            float minSqrDistance = Mathf.Infinity;
-            foreach (var item in possibleObjects)
-            {
-                float sqrDistance = item.GetSqrMagnitude(transform);
-                if (sqrDistance < minSqrDistance)
-                {
-                    minSqrDistance = sqrDistance;
-                    closiestCargo = item;
-                }
-            }
-            return closiestCargo;
         }
 
         private void OnTriggerExit(Collider other)
@@ -110,9 +98,26 @@ namespace Cargoman
                 _possiblePicks.Remove(cargo);
                 CurrentPick = null;
             }
-
         }
 
+        private T GetClosiestObject<T>(List<T> possibleObjects) where T : IInteractable
+        {
+            T closiestCargo = default(T);
+            float minSqrDistance = Mathf.Infinity;
+            foreach (var item in possibleObjects)
+            {
+                float sqrDistance = item.GetSqrMagnitude(transform);
+                if (sqrDistance < minSqrDistance)
+                {
+                    minSqrDistance = sqrDistance;
+                    closiestCargo = item;
+                }
+            }
+            return closiestCargo;
+        }
+        #endregion;
+
+        #region "Interactions with cargo";
         private IEnumerator PickCargo(PlayerMovementController playerMovement, ICargo pickableObject)
         {
             _possiblePicks.Remove(pickableObject);
@@ -182,9 +187,10 @@ namespace Cargoman
                 PickAnimation();
                 StartCoroutine(PickCargo(playerMovement, CurrentPick));
             }
-
         }
+        #endregion;
 
+        #region "Pick, put and drop animations";
         private void PickAnimation()
         {
             _animator.SetInteger("ActionMode", 0);
@@ -205,5 +211,6 @@ namespace Cargoman
             _animator.SetTrigger("ActionDropObject");
             _animator.SetInteger("MoveMode", 0);
         }
+        #endregion;
     }
 }
